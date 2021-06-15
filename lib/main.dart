@@ -1,7 +1,5 @@
+import 'package:expense_planner_app/widgets/user_transaction.dart';
 import 'package:flutter/material.dart';
-// ignore: unused_import
-import './transaction.dart';
-import 'package:intl/intl.dart';
 
 void main() => runApp(MyApp());
 
@@ -16,20 +14,12 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
-  final List<Transaction> transactions = [
-    Transaction(
-      id: 't1',
-      title: 'Nouvelle Chaussure',
-      amount: 89.99,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: 't2',
-      title: 'Tee Shirt',
-      amount: 29.99,
-      date: DateTime.now(),
-    ),
-  ];
+  // String? titleInput;
+  // String? amountInput;
+
+  final titleController =
+      TextEditingController(); /* création des propriétés pour la fonction controller ( récupérant les données du clavier*/
+  final amountController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -37,69 +27,22 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Flutter App'),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Container(
-            width: double.infinity,
-            child: Card(
-              color: Colors.blue,
-              child: Text('CHART!'),
-              elevation: 5,
+      body: SingleChildScrollView(
+              child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(
+              width: double.infinity,
+              child: Card(
+                color: Colors.blue,
+                child: Text('CHART!'),
+                elevation: 5,
+              ),
             ),
-          ),
-          Column(
-            children: transactions.map((tx) {
-              return Card(
-                child: Row(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 15,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.purple,
-                          width: 2,
-                        ),
-                      ),
-                      padding: EdgeInsets.all(10),
-                      child: Text(
-                        //' \$${tx.amount}', // par ce que le signe $ est réservé en dart, il faut ruser (string interpolation) pour afficher un prix en dollar
-                        '€' + tx.amount.toString(), //on va rester en Euro nous
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.purple,
-                        ),
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          tx.title!,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Text(
-                          DateFormat.yMMMd().format(tx.date!),
-                          style: TextStyle(
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ],
+            UserTransactions()
+          ],
+        ),
       ),
     );
   }
