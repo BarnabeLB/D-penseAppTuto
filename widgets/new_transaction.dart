@@ -1,11 +1,38 @@
 import 'package:flutter/material.dart';
 
-class NewTransaction extends StatelessWidget {
+class NewTransaction extends StatefulWidget {
   final Function addTx;
-  final titleController = TextEditingController();
-  final amountController = TextEditingController();
 
   NewTransaction(this.addTx);
+
+  @override
+  _NewTransactionState createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
+  final titleController = TextEditingController();
+
+  final amountController = TextEditingController();
+
+  void submitData(){
+    final enteredTitle = titleController.text;
+    final enteredAmount =  double.parse(amountController.text);
+    
+    
+    if(enteredTitle.isEmpty || enteredAmount <=0){
+      return;
+    }
+
+    /* widget.quelqueChose permet d'accéder aux information dans le widget */
+    widget.addTx(
+          enteredTitle,
+          enteredAmount,
+                );
+
+    /* Navigator.of(context).pop permet de fermer l'onglet NewTransaction une fois que les informations ont été entrées*/
+    Navigator.of(context).pop();
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,25 +47,24 @@ class NewTransaction extends StatelessWidget {
               decoration: InputDecoration(labelText: 'Titre'),
               controller:
                   titleController, /* enregistrement des données du clavier dans la propriété titleController, 
-                                                  pas besoin de crééer une fonction sur onChanged ici */
+                                               pas besoin de crééer une fonction sur onChanged ici */
               // onChanged: (value) {
               //   titleInput = value;
               // },
-            ),
+              onSubmitted: (_) => submitData(),
+              ),
             TextField(
               decoration: InputDecoration(labelText: 'Montant'),
               controller: amountController,
+              keyboardType: TextInputType.number,
+              /* subitData est une fonction demandant une argument en entrée, le fait de mettre "_", est une convention pour dire qu'on met quelque chose mais qu'on veut pas le nommer */
+              onSubmitted: (_) => submitData(),
               //  onChanged: (value) => amountInput = value,
             ),
             FlatButton(
               textColor: Colors.purple,
               child: Text('Ajouter Transaction'),
-              onPressed: () {
-                addTx(
-                  titleController.text,
-                  double.parse(amountController.text),
-                ); /* double.parse() convertie un nombre écrit dans une string pour un double, ne peut pas convertir des lettres*/
-              },
+              onPressed: submitData,
             )
           ],
         ),
