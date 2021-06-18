@@ -1,38 +1,43 @@
+import 'package:expense_planner_app/widgets/chart.dart';
 import 'package:flutter/material.dart';
 
-import './/widgets/new_transaction.dart';
+import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
+import './widgets/chart.dart';
 import './models/transaction.dart';
 
-
-void main() => runApp(MyApp());  
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Dépenses personnelles',
-                                                /* il faut utiliser ThemeData() et linker avec color: Theme.of(context). dans decoration : BoxDecoration pour pouvoir ajuster toutes la couleur de l'application d'un seul coup */
+      /* il faut utiliser ThemeData() et linker avec color: Theme.of(context). dans decoration : BoxDecoration pour pouvoir ajuster toutes la couleur de l'application d'un seul coup */
       theme: ThemeData(
-        primarySwatch: Colors.green,
-                                              /* accentColor change la couleur que des widgets configurer pour répondre à cette demande, comme l'est le FloatingButton */ 
-        accentColor: Colors.amber,
-        fontFamily: 'Quicksand', 
-        textTheme: ThemeData.light().textTheme.copyWith(
-          headline6: TextStyle(fontFamily: 'OpenSans',
-           fontWeight: FontWeight.bold,
-            fontSize: 18),
-          ),
-        appBarTheme: AppBarTheme(
+          primarySwatch: Colors.green,
+          /* accentColor change la couleur que des widgets configurer pour répondre à cette demande, comme l'est le FloatingButton */
+          accentColor: Colors.amber,
+          errorColor: Colors.red,
+          fontFamily: 'Quicksand',
           textTheme: ThemeData.light().textTheme.copyWith(
-          headline6: TextStyle(
-                                              /* title a été remplacé par healdline6 car deprecaded ( 2014 version) */
-            fontFamily: 'OpenSans',
-            fontSize: 20,
-            fontWeight: FontWeight.bold,  
-            ),
-          ),
-        )),
+                headline6: TextStyle(
+                    fontFamily: 'OpenSans',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18),
+                    button: TextStyle(color: Colors.white),
+              ),
+                
+          appBarTheme: AppBarTheme(
+            textTheme: ThemeData.light().textTheme.copyWith(
+                  headline6: TextStyle(
+                    /* title a été remplacé par healdline6 car deprecaded ( 2014 version) */
+                    fontFamily: 'OpenSans',
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+          )),
       home: MyHomePage(),
     );
   }
@@ -47,7 +52,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  
   final List<Transaction> _userTransactions = [
     // Transaction(
     //   id: 't1',
@@ -63,11 +67,21 @@ class _MyHomePageState extends State<MyHomePage> {
     // ),
   ];
 
-  void _addNewTransaction(String txTitle, double txAmount) {
+  List<Transaction>? get _recentTransactions {
+    return _userTransactions.where((tx) {
+      return tx.date!.isAfter(
+        DateTime.now().subtract(
+          Duration(days: 7),
+        ),
+      );
+    }).toList();
+  }
+
+  void _addNewTransaction(String txTitle, double txAmount, DateTime chosenDate) {
     final newTx = Transaction(
       title: txTitle,
       amount: txAmount,
-      date: DateTime.now(),
+      date: chosenDate,
       id: DateTime.now().toString(),
     );
 
@@ -76,17 +90,23 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _startAddNewTransaction(BuildContext ctx){
+  void _startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(
-      context: ctx, 
-      builder: (_){
-      return GestureDetector(
-        onTap: () {},
-        child: NewTransaction(_addNewTransaction),
-        behavior: HitTestBehavior.opaque,
-      ); 
-    },
+      context: ctx,
+      builder: (_) {
+        return GestureDetector(
+          onTap: () {},
+          child: NewTransaction(_addNewTransaction),
+          behavior: HitTestBehavior.opaque,
+        );
+      },
     );
+  }
+
+  void _deleteTransaction(String id){
+    setState(() {
+      _userTransactions.removeWhere((tx) => tx.id == id);
+    });
   }
 
   @override
@@ -95,34 +115,27 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('Dépenses personnelles'),
         actions: <Widget>[
-         IconButton(
-           icon: Icon(Icons.add), 
-           onPressed: ()=>_startAddNewTransaction(context),
-           ),
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () => _startAddNewTransaction(context),
+          ),
         ],
       ),
       body: SingleChildScrollView(
-              child: Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-              width: double.infinity,
-              child: Card(
-                color: Colors.blue,
-                child: Text('CHART!'),
-                elevation: 5,
-              ),
-            ),
-            TransactionList(_userTransactions),
+            Chart(_recentTransactions!),
+            TransactionList(_userTransactions, _deleteTransaction),
           ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: ()=>_startAddNewTransaction(context),
-        ),
+        onPressed: () => _startAddNewTransaction(context),
+      ),
     );
   }
 }
