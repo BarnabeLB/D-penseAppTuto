@@ -16,13 +16,13 @@ class _NewTransactionState extends State<NewTransaction> {
   DateTime? _selectedDate;
 
   void _submitData() {
-    if(_amountController.text.isEmpty){
+    if (_amountController.text.isEmpty) {
       return;
     }
     final enteredTitle = _titleController.text;
     final enteredAmount = double.parse(_amountController.text);
 
-    if (enteredTitle.isEmpty || enteredAmount <= 0 || _selectedDate== null ) {
+    if (enteredTitle.isEmpty || enteredAmount <= 0 || _selectedDate == null) {
       return;
     }
 
@@ -57,62 +57,69 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            TextField(
-              decoration: InputDecoration(labelText: 'Titre'),
-              controller: _titleController,
-              /* enregistrement des données du clavier dans la propriété titleController, 
-                                               pas besoin de crééer une fonction sur onChanged ici */
-              // onChanged: (value) {
-              //   titleInput = value;
-              // },
-              onSubmitted: (_) => _submitData(),
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Montant'),
-              controller: _amountController,
-              keyboardType: TextInputType.number,
-              /* subitData est une fonction demandant une argument en entrée, le fait de mettre "_", est une convention pour dire qu'on met quelque chose mais qu'on veut pas le nommer */
-              onSubmitted: (_) => _submitData(),
-              //  onChanged: (value) => amountInput = value,
-            ),
-            Container(
-              height: 70,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      _selectedDate == null
-                          ? 'Pas de date choisie!'
-                          : 'Date Choisie : ${DateFormat.yMd().format(_selectedDate!)}',
-                    ),
-                  ),
-                  FlatButton(
-                    textColor: Theme.of(context).primaryColor,
-                    child: Text(
-                      'Choisissez une date',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
+    return SingleChildScrollView(
+          child: Card(
+        elevation: 5,
+        child: Container(
+          padding: EdgeInsets.only(
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              TextField(
+                decoration: InputDecoration(labelText: 'Titre'),
+                controller: _titleController,
+                /* enregistrement des données du clavier dans la propriété titleController, 
+                                                 pas besoin de crééer une fonction sur onChanged ici */
+                // onChanged: (value) {
+                //   titleInput = value;
+                // },
+                onSubmitted: (_) => _submitData(),
+              ),
+              TextField(
+                decoration: InputDecoration(labelText: 'Montant'),
+                controller: _amountController,
+                keyboardType: TextInputType.number,
+                /* subitData est une fonction demandant une argument en entrée, le fait de mettre "_", est une convention pour dire qu'on met quelque chose mais qu'on veut pas le nommer */
+                onSubmitted: (_) => _submitData(),
+                //  onChanged: (value) => amountInput = value,
+              ),
+              Container(
+                height: 70,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        _selectedDate == null
+                            ? 'Pas de date choisie!'
+                            : 'Date Choisie : ${DateFormat.yMd().format(_selectedDate!)}',
                       ),
                     ),
-                    onPressed: _presentDatePicker,
-                  ),
-                ],
+                    FlatButton(
+                      textColor: Theme.of(context).primaryColor,
+                      child: Text(
+                        'Choisissez une date',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      onPressed: _presentDatePicker,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            RaisedButton(
-              color: Theme.of(context).primaryColor,
-              textColor: Theme.of(context).textTheme.button!.color,
-              child: Text('Ajouter Transaction'),
-              onPressed: _submitData,
-            )
-          ],
+              RaisedButton(
+                color: Theme.of(context).primaryColor,
+                textColor: Theme.of(context).textTheme.button!.color,
+                child: Text('Ajouter Transaction'),
+                onPressed: _submitData,
+              )
+            ],
+          ),
         ),
       ),
     );
