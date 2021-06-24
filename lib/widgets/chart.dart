@@ -6,7 +6,9 @@ import './chart_bar.dart';
 class Chart extends StatelessWidget {
   final List<Transaction> recentTransactions;
 
-  Chart(this.recentTransactions);
+  Chart(this.recentTransactions) {
+    print("Constructor Chart");
+  }
 
   List<Map<String, Object>> get groupedTransactionValues {
     return List.generate(7, (index) {
@@ -33,7 +35,9 @@ class Chart extends StatelessWidget {
         /*.substring(0,1),*/
         'montant': totalSum
       }; // on retourne la date et le montant autant de fois que la List le demande (return dans un return)
-    }).reversed.toList(); // .reserverd.toList() inverse l'ordre de la liste généré et met ainsi les jour les plus ancien à gauche
+    })
+        .reversed
+        .toList(); // .reserverd.toList() inverse l'ordre de la liste généré et met ainsi les jour les plus ancien à gauche
   }
 
   double get totalSpending {
@@ -44,29 +48,29 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(groupedTransactionValues);
+    print("build() Chart ");
 
     return Card(
-        elevation: 6,
-        margin: EdgeInsets.all(20),
-        child: Padding(
-          padding: EdgeInsets.all(10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: groupedTransactionValues.map((data) {
-              return Flexible(
-                fit: FlexFit.tight,
-                child: ChartBar(
-                  (data['jour'] as String),
-                  (data['montant'] as double),
-                  totalSpending == 0.0
-                      ? 0.0
-                      : (data['montant'] as double) / totalSpending,
-                ),
-              );
-            }).toList(),
-          ),
+      elevation: 6,
+      margin: EdgeInsets.all(20),
+      child: Padding(
+        padding: EdgeInsets.all(10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: groupedTransactionValues.map((data) {
+            return Flexible(
+              fit: FlexFit.tight,
+              child: ChartBar(
+                (data['jour'] as String),
+                (data['montant'] as double),
+                totalSpending == 0.0
+                    ? 0.0
+                    : (data['montant'] as double) / totalSpending,
+              ),
+            );
+          }).toList(),
         ),
+      ),
     );
   }
 }
